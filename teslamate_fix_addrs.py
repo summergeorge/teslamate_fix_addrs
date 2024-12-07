@@ -10,6 +10,7 @@ import argparse
 import os
 import signal
 from threading import Timer
+from urllib.parse import quote_plus
 
 logging.basicConfig(
     level=logging.INFO,
@@ -161,7 +162,11 @@ def custom_json_dumps(d):
     return d
 
 
-conn_str = "postgresql://%s:%s@%s:%s/%s" % (args.user, args.password,
+# 对敏感字段进行 URL 编码
+encoded_user = quote_plus(args.user)
+encoded_password = quote_plus(args.password)
+
+conn_str = "postgresql://%s:%s@%s:%s/%s" % (encoded_user, encoded_password,
                                             args.host, args.port, args.dbname)
 engine = create_engine(conn_str, json_serializer=custom_json_dumps, echo=False)
 
